@@ -113,7 +113,7 @@ load_default(){
 
 case $ACTION in
 start)
-	if [ $aria2_enable = 1 ];then
+	if [ "$aria2_enable" == "1" ];then
 	creat_conf
 	generate_token
 	start_aria2
