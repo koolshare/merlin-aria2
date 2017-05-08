@@ -1037,6 +1037,7 @@ function toggle_func(){
    <input type="hidden" name="SystemCmd" id="SystemCmd" onkeydown="onSubmitCtrl(this, ' Refresh ')" value="aria2_config.sh" />
    <input type="hidden" name="firmver" value="<% nvram_get(" firmver "); %>"/>
    <input type="hidden" id="aria2_enable" name="aria2_enable" value='<% dbus_get_def("aria2_enable", "0"); %>' />
+   <input type="hidden" id="aria2_restart" name="aria2_restart" value="1" />
    <table class="content" align="center" cellpadding="0" cellspacing="0">
     <tr>
      <td width="17">&nbsp;</td>
