@@ -533,7 +533,6 @@ function version_check(){
     }
     else {
      //document.getElementById("EditExports").style.display = "none";
-     document.getElementById("NoUSB").style.display = "";
      disk_flag=1;
     }
    }
