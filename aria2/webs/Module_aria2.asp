@@ -177,8 +177,8 @@ function init() {
 }
 
 function menu_hook(title, tab) {
-	tabtitle[tabtitle.length -1] = new Array("", "koolproxy");
-	tablink[tablink.length -1] = new Array("", "Module_koolproxy.asp");
+	tabtitle[tabtitle.length -1] = new Array("", "aria2");
+	tablink[tablink.length -1] = new Array("", "Module_aria2.asp");
 }
 
 function done_validating() {
