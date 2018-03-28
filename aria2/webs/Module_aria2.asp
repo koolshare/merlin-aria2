@@ -1106,7 +1106,7 @@ function toggle_func() {
               <th style="width:25%;">Aria2版本</th>
               <td>
                <div id="aria2_version_status" style="padding-top:5px;margin-left:0px;margin-top:0px;float: left;"><i>插件版本：<% dbus_get_def("aria2_version", "0"); %></i></div>
-               <div id="aria2_version1" style="padding-top:5px;margin-left:30px;margin-top:0px;float: left;"><i>aria2版本：1.31</i></div>
+               <div id="aria2_version1" style="padding-top:5px;margin-left:30px;margin-top:0px;float: left;"><i>aria2版本：1.33</i></div>
               </td>
              </tr>
                                 <tr id="glutton">

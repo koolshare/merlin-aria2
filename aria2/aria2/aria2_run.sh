@@ -88,7 +88,7 @@ del_process_check(){
 add_cpulimit(){
 	if [ "$aria2_cpulimit_enable" = "true" ];then
 		limit=`expr $aria2_cpulimit_value \* 2`
-		cpulimit -e aria2c -l 20  >/dev/null 2>&1 &
+		cpulimit -e aria2c -l $limit  >/dev/null 2>&1 &
 	fi
 }
 
@@ -109,6 +109,7 @@ load_default(){
 	dbus set aria2_version_web=`dbus get tmp_aria2_version_web`
 	dbus remove tmp_aria2_version
 }
+
 # ============================================
 
 case $ACTION in
@@ -119,6 +120,7 @@ start)
 	start_aria2
 	open_port
 	add_cpulimit
+	dbus set __event__onnatstart_shellinlinux=/koolshare/aria2/aria2_run.sh
 	fi
 	;;
 stop | kill )
@@ -126,6 +128,7 @@ stop | kill )
 	killall cpulimit
 	close_port
 	dbus remove aria2_custom
+	dbus remove __event__onnatstart_shellinlinux
 	;;
 restart)
 	del_process_check
@@ -138,12 +141,15 @@ restart)
 	start_aria2
 	open_port
 	add_cpulimit
+	dbus remove __event__onnatstart_shellinlinux
+	sleep 1
+	dbus set __event__onnatstart_shellinlinux=/koolshare/aria2/aria2_run.sh
 	;;
 default)
 	load_default
 	;;
 *)
-	echo "Usage: $0 (start|stop|restart|check|kill)"
-	exit 1
+	close_port
+	open_port
 	;;
 esac
