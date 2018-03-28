@@ -32,7 +32,7 @@ if [ -d /koolshare/www ];then
 fi
 
 chmod 755 /koolshare/aria2/*
-chmod 755 /koolshare/init.d/*
+chmod 755 /koolshare/init.d/S91aria2.sh
 chmod 755 /koolshare/scripts/aria2*
 chmod 755 /koolshare/perp/aria2/*
 
