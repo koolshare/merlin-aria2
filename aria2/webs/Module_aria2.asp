@@ -195,12 +195,16 @@ function buildswitch() {
 			document.getElementById('yaaw').style.display = "";
 			document.getElementById('glutton').style.display = "";
 			document.getElementById('aria2_base_table').style.display = "";
-			document.getElementById('aria2_rpc_table').style.display = "";
-			document.getElementById('aria2_limit_table').style.display = "";
-			document.getElementById('aria2_bt_table').style.display = "";
+			document.getElementById('aria2_rpc_table').style.display = "none";
+			document.getElementById('aria2_limit_table').style.display = "none";
+			document.getElementById('aria2_bt_table').style.display = "none";
 			document.getElementById('aria2_install_table').style.display = "";
 			document.getElementById('cmdBtn1').style.display = "";
 			document.getElementById('tablet_show').style.display = "";
+			$('.show-btn1').addClass('active');
+			$('.show-btn2').removeClass('active');
+			$('.show-btn3').removeClass('active');
+			$('.show-btn4').removeClass('active');
 		} else {
 			document.aria2_form.aria2_enable.value = 0;
 			document.getElementById('aria2-webui').style.display = "none";
