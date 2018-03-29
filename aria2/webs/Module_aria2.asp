@@ -169,6 +169,7 @@ function init() {
 	buildswitch();
 	conf2obj();
 	line_show();
+	toggle_func();
 	update_visibility();
 	version_check();
 	initial_dir();
@@ -200,7 +201,6 @@ function buildswitch() {
 			document.getElementById('aria2_install_table').style.display = "";
 			document.getElementById('cmdBtn1').style.display = "";
 			document.getElementById('tablet_show').style.display = "";
-			toggle_func();
 		} else {
 			document.aria2_form.aria2_enable.value = 0;
 			document.getElementById('aria2-webui').style.display = "none";
@@ -217,7 +217,7 @@ function buildswitch() {
 	});
 }
 
-function update_visibility() {
+function update_visibility(r) {
 	var rrt = document.getElementById("switch");
 	if (document.aria2_form.aria2_enable.value !== "1") {
 		rrt.checked = false;
@@ -236,13 +236,29 @@ function update_visibility() {
 		document.getElementById('aria2-webui').style.display = "";
 		document.getElementById('yaaw').style.display = "";
 		document.getElementById('glutton').style.display = "";
-		document.getElementById('aria2_base_table').style.display = "";
-		document.getElementById('aria2_rpc_table').style.display = "";
-		document.getElementById('aria2_limit_table').style.display = "";
-		document.getElementById('aria2_bt_table').style.display = "";
+		if($('.show-btn1').hasClass("active")){
+			document.getElementById('aria2_base_table').style.display = "";
+			document.getElementById('aria2_rpc_table').style.display = "none";
+			document.getElementById('aria2_limit_table').style.display = "none";
+			document.getElementById('aria2_bt_table').style.display = "none";
+		}else if($('.show-btn2').hasClass("active")){
+			document.getElementById('aria2_base_table').style.display = "none";
+			document.getElementById('aria2_rpc_table').style.display = "";
+			document.getElementById('aria2_limit_table').style.display = "none";
+			document.getElementById('aria2_bt_table').style.display = "none";
+		}else if($('.show-btn3').hasClass("active")){
+			document.getElementById('aria2_base_table').style.display = "none";
+			document.getElementById('aria2_rpc_table').style.display = "none";
+			document.getElementById('aria2_limit_table').style.display = "";
+			document.getElementById('aria2_bt_table').style.display = "none";
+		}else if($('.show-btn4').hasClass("active")){
+			document.getElementById('aria2_base_table').style.display = "none";
+			document.getElementById('aria2_rpc_table').style.display = "none";
+			document.getElementById('aria2_limit_table').style.display = "none";
+			document.getElementById('aria2_bt_table').style.display = "";
+		}
 		document.getElementById('aria2_install_table').style.display = "";
 		document.getElementById('cmdBtn1').style.display = "";
-		toggle_func();
 	}
 	showhide("aria2_rpc_listen_port_tr", (document.aria2_form.f_aria2_enable_rpc.value !== "false"));
 	showhide("aria2_rpc_allow_origin_all_tr", (document.aria2_form.f_aria2_enable_rpc.value !== "false"));
