@@ -5,7 +5,13 @@ eval `dbus export aria2`
 source /koolshare/scripts/base.sh
 export PERP_BASE=/koolshare/perp
 #old_token=$(cat /koolshare/aria2/aria2.conf|grep rpc-secret|cut -d "=" -f2)
-token=$(head -200 /dev/urandom | md5sum | cut -d " " -f 1)
+check_ddnsto=`dbus get ddnsto_enable`
+if [ "${check_ddnsto}"x = "1"x  ]; then
+  ddnsto_route_id=`/koolshare/bin/ddnsto -w | awk '{print $2}'`
+  token=`echo $(dbus get ddnsto_token)-${ddnsto_route_id}`
+else
+  token=$(head -200 /dev/urandom | md5sum | cut -d " " -f 1)
+fi
 ddns=$(nvram get ddns_hostname_x)
 usb_disk1=`/bin/mount | grep -E 'mnt' | sed -n 1p | cut -d" " -f3`
 usb_disk2=`/bin/mount | grep -E 'mnt' | sed -n 2p | cut -d" " -f3`
@@ -43,10 +49,8 @@ start_aria2(){
 
 # generate token
 generate_token(){
-	if [ -z $aria2_rpc_secret ];then
-		sed -i "s/rpc-secret=/rpc-secret=$token/g" "/koolshare/aria2/aria2.conf"
+		sed -i "s/rpc-secret=.*/rpc-secret=$token/g" "/koolshare/aria2/aria2.conf"
 		dbus set aria2_rpc_secret="$token"
-	fi
 }
 
 # open firewall port

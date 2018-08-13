@@ -17,5 +17,4 @@ chmod 755 /koolshare/init.d/*
 chmod 755 /koolshare/scripts/aria2*
 chmod 755 /koolshare/perp/aria2/*
 
-
-
+/koolshare/scripts/aria2_config.sh
