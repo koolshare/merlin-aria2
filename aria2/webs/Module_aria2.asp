@@ -24,67 +24,7 @@
     <script language="JavaScript" type="text/javascript" src="/client_function.js"></script>
     <script type="text/javascript" src="/switcherplugin/jquery.iphone-switch.js"></script>
     <script type="text/javascript" src="/dbconf?p=aria2_&v=<% uptime(); %>"></script>
-    <style type="text/css">
-      /* folder tree */
-      .mask_bg{
-        position:absolute;
-        margin:auto;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        z-index:100;
-        /*background-color: #FFF;*/
-        background:url(images/popup_bg2.gif);
-        background-repeat: repeat;
-        filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);
-        -moz-opacity: 0.6;
-        display:none;
-        /*visibility:hidden;*/
-        overflow:hidden;
-      }
-      .mask_floder_bg{
-        position:absolute;
-        margin:auto;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        z-index:300;
-        /*background-color: #FFF;*/
-        background:url(images/popup_bg2.gif);
-        background-repeat: repeat;
-        filter:progid:DXImageTransform.Microsoft.Alpha(opacity=60);
-        -moz-opacity: 0.6;
-        display:none;
-        /*visibility:hidden;*/
-        overflow:hidden;
-      }
-      .folderClicked{
-        color:#569AC7;
-        font-size:14px;
-        cursor:text;
-      }
-      .lastfolderClicked{
-        color:#FFFFFF;
-        cursor:pointer;
-      }
-      .show-btn1, .show-btn2, .show-btn3, .show-btn4 {
-        border: 1px solid #222;
-        background: #576d73;
-        font-size:10pt;
-        color: #fff;
-        padding: 10px 3.75px;
-        border-radius: 5px 5px 0px 0px;
-        width:8.45601%;
-      }
-      .active {
-        background: #2f3a3e;
-      }
-      input[type=button]:focus {
-        outline: none;
-       }
-    </style>
+    <style type="text/css">.mask_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:100;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.mask_floder_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:300;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.folderClicked{color:#569ac7;font-size:14px;cursor:text}.lastfolderClicked{color:#fff;cursor:pointer}.show-btn1,.show-btn2,.show-btn3,.show-btn4{border:1px solid #222;background:#576d73;font-size:10pt;color:#fff;padding:10px 3.75px;border-radius:5px 5px 0 0;width:8.45601%}.aria2_btn{border:1px solid #222;background:linear-gradient(to bottom,#033 0,#000 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.aria2_btn:hover{border:1px solid #222;background:linear-gradient(to bottom,#27c9c9 0,#279fd9 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.active{background:#2f3a3e}input[type=button]:focus{outline:0}</style>
     <script>
 jQuery.ajax = (function(_ajax) {
   var protocol = location.protocol,
@@ -153,6 +93,7 @@ var _layer_order = "";
 var FromObject = "0";
 var lastClickedObj = 0;
 var disk_flag = 0;
+var _responseLen;
 window.onresize = cal_panel_block;
 var nfsd_enable = '<% nvram_get("nfsd_enable"); %>';
 var nfsd_exportlist_array = '<% nvram_get("nfsd_exportlist"); %>';
@@ -163,14 +104,10 @@ String.prototype.replaceAll = function(s1, s2) {　　
 var $G = function(id) {
   return document.getElementById(id);
 };
-var Base64;
-if(typeof btoa == "Function") {
-   Base64 = {encode:function(e){ return btoa(e); }, decode:function(e){ return atob(e);}};
-} else {
-   Base64 ={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9\+\/\=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/\r\n/g,"\n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
-}
+
 function init() {
   show_menu(menu_hook);
+  get_status();
   buildswitch();
   conf2obj();
   line_show();
@@ -332,21 +269,66 @@ function load_default_value(o, s) {
 }
 
 function version_check() {
-  $("#aria2_version_status").html("<i>插件版本：" + db_aria2_['aria2_version']);
-
   $.ajax({
-    url: 'https://raw.githubusercontent.com/koolshare/koolshare.github.io/acelan_softcenter_ui/aria2/config.json.js',
+    url: 'https://koolshare.ngrok.wang/aria2/config.json.js',
     type: 'GET',
+    dataType: 'jsonp',
     success: function(res) {
-      var txt = $(res.responseText).text();
-      if (typeof(txt) != "undefined" && txt.length > 0) {
-        //console.log(txt);
-        var obj = $.parseJSON(txt.replace("'", "\""));
-        $("#aria2_version_status").html("<i>插件版本：" + obj.version);
-        if (obj.version != db_aria2_["aria2_version"]) {
-          $("#aria2_version_status").html("<i>有新版本：" + obj.version);
+      if (typeof(res["version"]) != "undefined" && res["version"].length > 0) {
+        if (res["version"] == db_aria2_["aria2_version"]) {
+          $("#aria2_version_status").html("插件版本：" + res["version"]);
+        } else if (res["version"] != db_aria2_["aria2_version"]) {
+          $("#aria2_version_status").html("<font color=\"#66FF66\">有新版本：" + res.version + "</font>");
         }
       }
+    }
+  });
+}
+
+function get_status() {
+  $.ajax({
+    url: 'apply.cgi?current_page=Module_aria2.asp&next_page=Module_aria2.asp&group_id=&modified=0&action_mode=+Refresh+&action_script=&action_wait=&first_time=&preferred_lang=CN&SystemCmd=aria2_status.sh',
+    dataType: 'html',
+    error: function(xhr) {
+      alert("error");
+    },
+    success: function(response) {
+      //alert("success");
+      setTimeout("check_aria2_status();", 1000);
+    }
+  });
+}
+
+
+function check_aria2_status() {
+  $.ajax({
+    url: '/res/aria2_check.html',
+    dataType: 'html',
+
+    error: function(xhr) {
+      setTimeout("check_aria2_status();", 1000);
+    },
+    success: function(response) {
+      var _cmdBtn = $G("cmdBtn");
+      if (response.search("XU6J03M6") != -1) {
+        aria2_status = response.replace("XU6J03M6", " ");
+        //alert(aria2_status);
+        $G("status").innerHTML = aria2_status;
+        return true;
+      }
+
+      if (_responseLen == response.length) {
+        noChange_status++;
+      } else {
+        noChange_status = 0;
+      }
+      if (noChange_status > 100) {
+        noChange_status = 0;
+        //refreshpage();
+      } else {
+        setTimeout("check_aria2_status();", 400);
+      }
+      _responseLen = response.length;
     }
   });
 }
@@ -956,15 +938,13 @@ function check_dir_path() {
 }
 
 function generate_ariang_link() {
-  var link_ariang = Base64.encode('<% dbus_get_def("aria2_rpc_secret", ""); %>');
+  var link_ariang = window.btoa('<% dbus_get_def("aria2_rpc_secret", ""); %>')
   if ('<% dbus_get_def("ddnsto_enable", "0"); %>' == "1") {
-    //var link_ariang = window.btoa('<% dbus_get_def("aria2_rpc_secret", "0"); %>')
     document.getElementById("link4.1").href = "http://aria2.me/aria-ng/#!/settings/rpc/set/wss/www.ddnsto.com/443/jsonrpc/" + link_ariang;
   }else{
-    document.getElementById("link4.1").href = "http://aria2.me/aria-ng/#!/settings/rpc/set/http/" + '<% nvram_get("lan_ipaddr"); %>' + "/" + '<% dbus_get_def("aria2_rpc_listen_port", "6800"); %>' + "/" + link_ariang;
+    document.getElementById("link4.1").href = "http://aria2.me/aria-ng/#!/settings/rpc/set/http/" + '<% nvram_get("lan_ipaddr"); %>' + "/" + '<% dbus_get_def("aria2_rpc_listen_port", "6800"); %>' + "/jsonrpc/" + link_ariang;
   }
 }
-
 function generate_glutton_link() {
   if ('<% dbus_get_def("ddnsto_enable", "0"); %>' == "1") {
     var link_glutton = window.btoa("https://www.ddnsto.com:443" + "/jsonrpc||" + '<% dbus_get_def("aria2_rpc_secret", "0"); %>')
@@ -1120,22 +1100,26 @@ function toggle_func() {
             <div class="formfontdesc" id="cmdDesc">在此页面，你能进行Aria2的安装和卸载，以及其他一些简单的设置</div>
             <div class="formfontdesc" id="cmdDesc"></div>
             <table id="aria2_switch" style="margin:10px 0px 0px 0px;" width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
-             <tr>
-              <th style="width:25%;">开启Aria2</th>
-              <td colspan="2">
-               <div class="switch_field" style="display:table-cell">
-                <label for="switch">
-                 <input id="switch" class="switch" type="checkbox" style="display: none;">
-                 <div class="switch_container">
-                  <div class="switch_bar"></div>
-                  <div class="switch_circle transition_style">
-                   <div></div>
+              <tr>
+                <th style="width:25%;">开启Aria2</th>
+                <td colspan="2">
+                  <div claddnsto="switch_field" style="display:table-cell;float: left;">
+                    <label for="switch">
+                      <input id="switch" class="switch" type="checkbox" style="display: none;">
+                      <div class="switch_container">
+                        <div class="switch_bar"></div>
+                        <div class="switch_circle transition_style">
+                          <div></div>
+                        </div>
+                      </div>
+                    </label>
                   </div>
-                 </div>
-                </label>
-               </div>
-              </td>
-             </tr>
+                  <div id="aria2_version_status" style="padding-top:5px;margin-left:30px;margin-top:0px;float: left;">插件版本：<% dbus_get_def("aria2_version", "0"); %></div>
+                  <div id="aria2_changelog_show" style="padding-top:5px;margin-left:30px;margin-top:0px;float: right;">
+                    <a type="button" class="aria2_btn" style="cursor:pointer" href="https://raw.githubusercontent.com/koolshare/merlin-aria2/master/Changelog.txt" target="_blank">更新日志</a>
+                  </div>
+                </td>
+              </tr>
             </table>
             <!--beginning of aria2 install table-->
             <table id="aria2_install_table" style="margin:10px 0px 0px 0px;" width="100%" border="1" align="center" cellpadding="4" cellspacing="0" bordercolor="#6b8fa3" class="FormTable">
@@ -1144,11 +1128,9 @@ function toggle_func() {
                <td colspan="2">Aria2相关信息</td>
               </tr>
              </thead>
-             <tr>
-              <th style="width:25%;">Aria2版本</th>
-              <td>
-               <div id="aria2_version_status" style="padding-top:5px;margin-left:0px;margin-top:0px;float: left;"><i>插件版本：<% dbus_get_def("aria2_version", "0"); %></i></div>
-               <div id="aria2_version1" style="padding-top:5px;margin-left:30px;margin-top:0px;float: left;"><i>aria2版本：1.33</i></div>
+             <tr id="aria2_status">
+              <th style="width:25%;">运行状态</th>
+              <td><span id="status">获取中...</span>
               </td>
              </tr>
              <tr id="aria-ng">
@@ -1188,14 +1170,14 @@ function toggle_func() {
             </table>
             <div id="tablet_show">
              <table style="margin:10px 0px 0px 0px;border-collapse:collapse"  width="100%" height="37px">
-                    <tr width="235px">
-                     <td colspan="4" cellpadding="0" cellspacing="0" style="padding:0" border="1" bordercolor="#000">
-                       <input id="show_btn1" class="show-btn1" style="cursor:pointer" type="button" value="基本设置"/>
-                       <input id="show_btn2" class="show-btn2" style="cursor:pointer" type="button" value="RPC设定"/>
-                       <input id="show_btn3" class="show-btn3" style="cursor:pointer" type="button" value="下载限制"/>
-                       <input id="show_btn4" class="show-btn4" style="cursor:pointer" type="button" value="BT设置"/>
-                     </td>
-                     </tr>
+              <tr width="235px">
+                <td colspan="4" cellpadding="0" cellspacing="0" style="padding:0" border="1" bordercolor="#000">
+                  <input id="show_btn1" class="show-btn1" style="cursor:pointer" type="button" value="基本设置"/>
+                  <input id="show_btn2" class="show-btn2" style="cursor:pointer" type="button" value="RPC设定"/>
+                  <input id="show_btn3" class="show-btn3" style="cursor:pointer" type="button" value="下载限制"/>
+                  <input id="show_btn4" class="show-btn4" style="cursor:pointer" type="button" value="BT设置"/>
+                </td>
+                </tr>
              </table>
             </div>
 
@@ -1390,7 +1372,7 @@ function toggle_func() {
                             </td>
                             <td>
                               <input type="password" class="input_ss_table" style="width:auto;" name="aria2_rpc_secret" value="" maxlength="100" size="50" id="aria2_rpc_secret" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);"><br>
-                              <small><i>(请输入DDNSTO的Token+路由器ID，格式为：token-routeID，如果不填，此处将会自动生成随机密码)</i></small>
+                              <small><i>(请输入aria2的Token+路由器ID，格式为：token-routeID，如果不填，此处将会自动生成随机密码)</i></small>
                             </td>
                           </tr>
                         </table>

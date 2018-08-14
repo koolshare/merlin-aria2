@@ -1,5 +1,7 @@
 Koolshare Asuswrt-Merlin adm Changelog
 ===========================================
+2.3
+    -Fix    好吧，还是用母语吧，修复一些脚本错误
 2.2
     -add    support ddnsto token
 1.7.5

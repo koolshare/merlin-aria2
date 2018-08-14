@@ -6,7 +6,7 @@ source /koolshare/scripts/base.sh
 export PERP_BASE=/koolshare/perp
 #old_token=$(cat /koolshare/aria2/aria2.conf|grep rpc-secret|cut -d "=" -f2)
 check_ddnsto=`dbus get ddnsto_enable`
-if [ "${check_ddnsto}"x = "1"x  ]; then
+if [ "${check_ddnsto}"x = "1"x ]; then
   ddnsto_route_id=`/koolshare/bin/ddnsto -w | awk '{print $2}'`
   token=`echo $(dbus get ddnsto_token)-${ddnsto_route_id}`
 else
