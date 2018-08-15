@@ -24,7 +24,7 @@
     <script language="JavaScript" type="text/javascript" src="/client_function.js"></script>
     <script type="text/javascript" src="/switcherplugin/jquery.iphone-switch.js"></script>
     <script type="text/javascript" src="/dbconf?p=aria2_&v=<% uptime(); %>"></script>
-    <style type="text/css">.mask_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:100;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.mask_floder_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:300;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.folderClicked{color:#569ac7;font-size:14px;cursor:text}.lastfolderClicked{color:#fff;cursor:pointer}.show-btn1,.show-btn2,.show-btn3,.show-btn4{border:1px solid #222;background:#576d73;font-size:10pt;color:#fff;padding:10px 3.75px;border-radius:5px 5px 0 0;width:8.45601%}.aria2_btn{border:1px solid #222;background:linear-gradient(to bottom,#033 0,#000 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.aria2_btn:hover{border:1px solid #222;background:linear-gradient(to bottom,#27c9c9 0,#279fd9 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.active{background:#2f3a3e}input[type=button]:focus{outline:0}</style>
+    <style type="text/css">.mask_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:100;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.mask_floder_bg{position:absolute;margin:auto;top:0;left:0;width:100%;height:100%;z-index:300;background:url(images/popup_bg2.gif);background-repeat:repeat;filter:alpha(opacity=60);-moz-opacity:.6;display:none;overflow:hidden}.folderClicked{color:#569ac7;font-size:14px;cursor:text}.lastfolderClicked{color:#fff;cursor:pointer}.show-btn1,.show-btn2,.show-btn3,.show-btn4{border:1px solid #222;background:#576d73;font-size:10pt;color:#fff;padding:10px 3.75px;border-radius:5px 5px 0 0;width:8.45601%}.aria2_btn{border:1px solid #222;background:linear-gradient(to bottom,#033 0,#000 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.aria2_btn:hover{border:1px solid #222;background:linear-gradient(to bottom,#27c9c9 0,#279fd9 100%);font-size:10pt;color:#fff;padding:5px 5px;border-radius:5px 5px 5px 5px;width:16%}.aria2_btn:disabled{border: 1px solid #DDD;background:linear-gradient(to bottom,#2F3A3E 0,#2F3A3E 100%);background-color: #F5F5F5;color:#ACA899;}.active{background:#2f3a3e}input[type=button]:focus{outline:0}</style>
     <script>
 jQuery.ajax = (function(_ajax) {
   var protocol = location.protocol,
@@ -110,12 +110,13 @@ function init() {
   get_status();
   buildswitch();
   conf2obj();
-  line_show();
   toggle_func();
   update_visibility();
   version_check();
   initial_dir();
   check_dir_path();
+  check_ddnsto();
+  line_show();
   generate_ariang_link();
   generate_glutton_link();
 }
@@ -129,13 +130,35 @@ function done_validating() {
   return true;
 }
 
+function check_ddnsto() {
+  if ('<% dbus_get_def("ddnsto_enable", "0"); %>' == "1") {
+    $G("aria2_ddnsto").disabled=false;
+    $G("ddnsto_status").innerHTML = "启用DDNSTO远程连接(自动设置配置Token及控制台)";
+  }else{
+    $G("aria2_ddnsto").disabled=true;
+    $G("aria2_ddnsto").checked = false;
+    $G("f_aria2_ddnsto").value = "false";
+    $G("ddnsto_status").innerHTML = "<font color=#ffffff>如需远程连接Aria，请正确设置DDNSTO插件并启用！</font>";
+    if (validForm()) {
+      document.aria2_form.submit();
+    }
+  }
+  if ($G("aria2_ddnsto").checked){
+    $G("aria2_rpc_secret").readOnly=true;
+    $G("random_btn1").disabled=true;
+  }else{
+    $G("aria2_rpc_secret").readOnly=false;
+    $G("random_btn1").disabled=false;
+  }
+}
+
 function buildswitch() {
   $("#switch").click(
     function() {
     if (document.getElementById('switch').checked) {
       document.aria2_form.aria2_enable.value = 1;
-      document.getElementById('aria2-webui').style.display = "";
-      document.getElementById('yaaw').style.display = "";
+      document.getElementById('webui').style.display = "";
+      document.getElementById('ariang').style.display = "";
       document.getElementById('glutton').style.display = "";
       document.getElementById('aria2_base_table').style.display = "";
       document.getElementById('aria2_rpc_table').style.display = "none";
@@ -150,8 +173,8 @@ function buildswitch() {
       $('.show-btn4').removeClass('active');
     } else {
       document.aria2_form.aria2_enable.value = 0;
-      document.getElementById('aria2-webui').style.display = "none";
-      document.getElementById('yaaw').style.display = "none";
+      document.getElementById('webui').style.display = "none";
+      document.getElementById('ariang').style.display = "none";
       document.getElementById('glutton').style.display = "none";
       document.getElementById('aria2_base_table').style.display = "none";
       document.getElementById('aria2_rpc_table').style.display = "none";
@@ -168,8 +191,8 @@ function update_visibility(r) {
   var rrt = document.getElementById("switch");
   if (document.aria2_form.aria2_enable.value !== "1") {
     rrt.checked = false;
-    document.getElementById('aria2-webui').style.display = "none";
-    document.getElementById('yaaw').style.display = "none";
+    document.getElementById('webui').style.display = "none";
+    document.getElementById('ariang').style.display = "none";
     document.getElementById('glutton').style.display = "none";
     document.getElementById('aria2_base_table').style.display = "none";
     document.getElementById('aria2_rpc_table').style.display = "none";
@@ -180,8 +203,8 @@ function update_visibility(r) {
     document.getElementById('aria2_install_table').style.display = "none";
   } else {
     rrt.checked = true;
-    document.getElementById('aria2-webui').style.display = "";
-    document.getElementById('yaaw').style.display = "";
+    document.getElementById('webui').style.display = "";
+    document.getElementById('ariang').style.display = "";
     document.getElementById('glutton').style.display = "";
     if($('.show-btn1').hasClass("active")){
       document.getElementById('aria2_base_table').style.display = "";
@@ -237,7 +260,7 @@ function conf2obj() {
       $("#" + params1[i]).val(db_aria2_[params1[i]]);
     }
   }
-  var params2 = ["aria2_cpulimit_enable", "aria2_disable_ipv6", "aria2_continue", "aria2_enable_mmap", "aria2_enable_rpc", "aria2_rpc_allow_origin_all", "aria2_rpc_listen_all", "aria2_bt_enable_lpd", "aria2_enable_dht", "aria2_bt_require_crypto", "aria2_follow_torrent", "aria2_enable_peer_exchange", "aria2_force_save", "aria2_bt_hash_check_seed", "aria2_bt_seed_unverified", "aria2_bt_save_metadata"];
+  var params2 = ["aria2_ddnsto", "aria2_cpulimit_enable", "aria2_disable_ipv6", "aria2_continue", "aria2_enable_mmap", "aria2_enable_rpc", "aria2_rpc_allow_origin_all", "aria2_rpc_listen_all", "aria2_bt_enable_lpd", "aria2_enable_dht", "aria2_bt_require_crypto", "aria2_follow_torrent", "aria2_enable_peer_exchange", "aria2_force_save", "aria2_bt_hash_check_seed", "aria2_bt_seed_unverified", "aria2_bt_save_metadata"];
   for (var i = 0; i < params2.length; i++) {
     if (typeof db_aria2_[params2[i]] !== "undefined") {
       $("#f_" + params2[i]).val(db_aria2_[params2[i]]);
@@ -476,10 +499,34 @@ function alert_custom() {
   }
 }
 
+function randomWord(randomFlag, min, max){
+    var str = "",
+        range = min,
+        arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    // 随机产生
+    if(randomFlag){
+        range = Math.round(Math.random() * (max-min)) + min;
+    }
+    for(var i=0; i<range; i++){
+        pos = Math.round(Math.random() * (arr.length-1));
+        str += arr[pos];
+    }
+    return str;
+}
+
 function oncheckclick(obj) {
   if (obj.checked) {
+    if (obj.id == "aria2_ddnsto"){
+      $G("aria2_rpc_secret").readOnly=true;
+      $G("random_btn1").disabled=true;
+    }
     document.getElementById("f_" + obj.id).value = "true";
   } else {
+    if (obj.id == "aria2_ddnsto"){
+      $G("aria2_rpc_secret").readOnly=false;
+      $G("random_btn1").disabled=false;
+      $G('aria2_rpc_secret').value=randomWord(true, 16, 32);
+    }
     document.getElementById("f_" + obj.id).value = "false";
   }
 }
@@ -939,17 +986,17 @@ function check_dir_path() {
 
 function generate_ariang_link() {
   var link_ariang = window.btoa('<% dbus_get_def("aria2_rpc_secret", ""); %>')
-  if ('<% dbus_get_def("ddnsto_enable", "0"); %>' == "1") {
+  if ($G("aria2_ddnsto").checked) {
     document.getElementById("link4.1").href = "http://aria2.me/aria-ng/#!/settings/rpc/set/wss/www.ddnsto.com/443/jsonrpc/" + link_ariang;
   }else{
     document.getElementById("link4.1").href = "http://aria2.me/aria-ng/#!/settings/rpc/set/http/" + '<% nvram_get("lan_ipaddr"); %>' + "/" + '<% dbus_get_def("aria2_rpc_listen_port", "6800"); %>' + "/jsonrpc/" + link_ariang;
   }
 }
 function generate_glutton_link() {
-  if ('<% dbus_get_def("ddnsto_enable", "0"); %>' == "1") {
+  if ($G("aria2_ddnsto").checked) {
     var link_glutton = window.btoa("https://www.ddnsto.com:443" + "/jsonrpc||" + '<% dbus_get_def("aria2_rpc_secret", "0"); %>')
   }else{
-    var link_glutton = window.btoa("http://" + '<% nvram_get("lan_ipaddr", "192.168.50.1"); %>' + ":" + '<% dbus_get_def("aria2_rpc_listen_port", "192.168.1.1"); %>' + "/jsonrpc||" + '<% dbus_get_def("aria2_rpc_secret", "0"); %>')
+    var link_glutton = window.btoa("http://" + '<% nvram_get("lan_ipaddr", "192.168.50.1"); %>' + ":" + '<% dbus_get_def("aria2_rpc_listen_port", "192.168.1.1"); %>' + "/jsonrpc||" + '<% dbus_get_def("aria2_rpc_secret", ""); %>')
   }
   document.getElementById("link4.2").href = "http://aria2.me/glutton/" + "?s=" + link_glutton;
 }
@@ -1133,7 +1180,12 @@ function toggle_func() {
               <td><span id="status">获取中...</span>
               </td>
              </tr>
-             <tr id="aria-ng">
+             <tr>
+              <th style="width:25%;">远程连接</th>
+              <td><label><input type="checkbox" id="aria2_ddnsto" checked="checked" onclick="oncheckclick(this);">
+                <input type="hidden" id="f_aria2_ddnsto" name="aria2_ddnsto" value="" /><span id="ddnsto_status"></span></label></td>
+             </tr>
+             <tr id="ariang">
                 <th style="width:25%;">AriaNg控制台</th>
                 <td>
                  <div style="padding-top:5px;">
@@ -1151,19 +1203,11 @@ function toggle_func() {
                   </div>
                 </td>
             </tr>
-             <tr id="yaaw">
-              <th style="width:25%;">yaaw控制台</th>
+             <tr id="webui">
+              <th style="width:25%;">更多控制台</th>
               <td>
                <div style="padding-top:5px;">
-                <a style="font-size: 16px; "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;" href="http://aria2.me/yaaw/" target="_blank"><i><u>http://aria2.me/yaaw/</u></i></a>
-               </div>
-              </td>
-             </tr>
-             <tr id="aria2-webui">
-              <th style="width:25%;">aria2-webui控制台</th>
-              <td>
-               <div style="padding-top:5px;">
-                <a style="font-size: 16px; "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;" href="http://aria2.me/webui-aria2/" target="_blank"><i><u>http://aria2.me/webui-aria2/</u></i></a>
+                <a style="font-size: 16px; "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;" href="http://aria2.me/" target="_blank"><i><u>http://aria2.me/</u></i></a>
                </div>
               </td>
              </tr>
@@ -1371,8 +1415,9 @@ function toggle_func() {
                               <label>RPC密码 / token</label>
                             </td>
                             <td>
-                              <input type="password" class="input_ss_table" style="width:auto;" name="aria2_rpc_secret" value="" maxlength="100" size="50" id="aria2_rpc_secret" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);"><br>
-                              <small><i>(请输入aria2的Token+路由器ID，格式为：token-routeID，如果不填，此处将会自动生成随机密码)</i></small>
+                              <input type="password" class="input_ss_table" style="width:auto;" name="aria2_rpc_secret" value="" maxlength="100" size="50" id="aria2_rpc_secret" autocomplete="new-password" autocorrect="off" autocapitalize="off" value="" onBlur="switchType(this, false);" onFocus="switchType(this, true);">
+                              <input type="button" class="aria2_btn" name="random_btn1" id="random_btn1" style="cursor:pointer" onclick="javascript:$G('aria2_rpc_secret').value=randomWord(true, 16, 32);" value="随机生成" /><br>
+                              <small><i>(如果勾选上方的“启用DDNSTO远程连接”，此处将不能自定义。)</i></small>
                             </td>
                           </tr>
                         </table>

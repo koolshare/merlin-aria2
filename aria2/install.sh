@@ -17,4 +17,8 @@ chmod 755 /koolshare/init.d/*
 chmod 755 /koolshare/scripts/aria2*
 chmod 755 /koolshare/perp/aria2/*
 
+check_ddnsto_en=`dbus get ddnsto_enable`
+if [ "${check_ddnsto_en}"x = "1"x ]; then
+  dbus set aria2_ddnsto=true
+fi
 /koolshare/scripts/aria2_config.sh

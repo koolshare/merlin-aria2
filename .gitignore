@@ -1,0 +1,47 @@
+# svn
+.svn/
+# Linux System
+*~
+ 
+# KDE directory preferences
+.directory
+ 
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+ 
+# Windows System
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+ 
+# Folder config file
+Desktop.ini
+ 
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+ 
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+ 
+# Windows shortcuts
+*.lnk
+ 
+# OSX System
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+ 
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+
