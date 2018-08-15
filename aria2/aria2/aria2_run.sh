@@ -5,7 +5,13 @@ eval `dbus export aria2`
 source /koolshare/scripts/base.sh
 export PERP_BASE=/koolshare/perp
 #old_token=$(cat /koolshare/aria2/aria2.conf|grep rpc-secret|cut -d "=" -f2)
-token=$(head -200 /dev/urandom | md5sum | cut -d " " -f 1)
+check_ddnsto=`dbus get aria2_ddnsto`
+if [ "${check_ddnsto}"x = "true"x ]; then
+  ddnsto_route_id=`/koolshare/bin/ddnsto -w | awk '{print $2}'`
+  token=`echo $(dbus get ddnsto_token)-${ddnsto_route_id}`
+else
+  token=${aria2_rpc_secret}
+fi
 ddns=$(nvram get ddns_hostname_x)
 usb_disk1=`/bin/mount | grep -E 'mnt' | sed -n 1p | cut -d" " -f3`
 usb_disk2=`/bin/mount | grep -E 'mnt' | sed -n 2p | cut -d" " -f3`
@@ -22,7 +28,7 @@ echo ""
 # start aria2c
 creat_conf(){
 cat > /koolshare/aria2/aria2.conf <<EOF
-`dbus list aria2 | grep -vw aria2_enable | grep -vw aria2_binary| grep -vw aria2_binary_custom | grep -vw aria2_check | grep -vw aria2_check_time | grep -vw aria2_sleep | grep -vw aria2_update_enable| grep -vw aria2_update_sel | grep -vw aria2_version | grep -vw aria2_cpulimit_enable | grep -vw aria2_cpulimit_value| grep -vw aria2_version_web | grep -vw aria2_warning | grep -vw aria2_custom | grep -vw aria2_install_status|grep -vw aria2_restart |grep -vw aria2_dir| sed 's/aria2_//g' | sed 's/_/-/g'`
+`dbus list aria2 | grep -vw aria2_enable | grep -vw aria2_ddnsto | grep -vw aria2_binary| grep -vw aria2_binary_custom | grep -vw aria2_check | grep -vw aria2_check_time | grep -vw aria2_sleep | grep -vw aria2_update_enable| grep -vw aria2_update_sel | grep -vw aria2_version | grep -vw aria2_cpulimit_enable | grep -vw aria2_cpulimit_value| grep -vw aria2_version_web | grep -vw aria2_warning | grep -vw aria2_custom | grep -vw aria2_install_status|grep -vw aria2_restart |grep -vw aria2_dir| sed 's/aria2_//g' | sed 's/_/-/g'`
 `dbus list aria2|grep -w aria2_dir|sed 's/aria2_//g'`
 EOF
 
@@ -43,10 +49,8 @@ start_aria2(){
 
 # generate token
 generate_token(){
-	if [ -z $aria2_rpc_secret ];then
-		sed -i "s/rpc-secret=/rpc-secret=$token/g" "/koolshare/aria2/aria2.conf"
-		dbus set aria2_rpc_secret="$token"
-	fi
+  sed -i "s/rpc-secret=.*/rpc-secret=$token/g" "/koolshare/aria2/aria2.conf"
+  dbus set aria2_rpc_secret="$token"
 }
 
 # open firewall port
