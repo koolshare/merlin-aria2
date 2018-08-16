@@ -188,6 +188,8 @@ function buildswitch() {
 }
 
 function update_visibility(r) {
+  if (r && r.type == "checkbox")
+    oncheckclick(r);
   var rrt = document.getElementById("switch");
   if (document.aria2_form.aria2_enable.value !== "1") {
     rrt.checked = false;
@@ -593,7 +595,7 @@ function initial_dir() {
 function initial_dir_status(data) {
   if (data != "" && data.length != 2) {
     get_layer_items("0");
-    eval("var default_dir=" + data);
+    //eval("var default_dir=" + data);
   } else {
     //document.getElementById("EditExports").style.display = "none";
     disk_flag = 1;
@@ -1233,7 +1235,7 @@ function toggle_func() {
                               <label>启用CPU占用限制</label>
                             </td>
                             <td>
-                              <input type="checkbox" id="aria2_cpulimit_enable" checked="" onclick="oncheckclick(this)" onchange="update_visibility();">
+                              <input type="checkbox" id="aria2_cpulimit_enable" checked="" onchange="update_visibility(this);">
                               <input type="hidden" id="f_aria2_cpulimit_enable" name="aria2_cpulimit_enable" value="" />
                               <input style="display: none;" type="text" class="input_ss_table" style="width:auto;" name="aria2_cpulimit_value" value="30" maxlength="40" size="40" id="aria2_cpulimit_value">
                               <small>(范围: 1 - 100; 默认: 30)</small>
@@ -1350,7 +1352,7 @@ function toggle_func() {
                               <label>启用 RPC</label>
                             </td>
                             <td>
-                              <input type="checkbox" id="aria2_enable_rpc" checked="" onclick="oncheckclick(this)" onchange="update_visibility();">
+                              <input type="checkbox" id="aria2_enable_rpc" checked="" onchange="update_visibility(this);">
                               <input type="hidden" id="f_aria2_enable_rpc" name="aria2_enable_rpc" value="" />
                               <small>*</small>
                             </td>
@@ -1521,7 +1523,7 @@ function toggle_func() {
                               <label>启用 DHT</label>
                             </td>
                             <td>
-                              <input type="checkbox" id="aria2_enable_dht" checked="" onclick="oncheckclick(this)"  onchange="update_visibility();">
+                              <input type="checkbox" id="aria2_enable_dht" checked="" onchange="update_visibility(this);">
                               <input type="hidden" id="f_aria2_enable_dht" name="aria2_enable_dht" value="" />
                               <small>*</small>
                             </td>
@@ -1622,7 +1624,7 @@ function toggle_func() {
                               <label>启用会话session强制保存</label>
                             </td>
                             <td>
-                              <input type="checkbox" id="aria2_force_save" checked="" onclick="oncheckclick(this)"  onchange="update_visibility();">
+                              <input type="checkbox" id="aria2_force_save" checked="" onchange="update_visibility(this);">
                               <input type="hidden" id="f_aria2_force_save" name="aria2_force_save" value="" />
                               <small>*</small>
                             </td>
